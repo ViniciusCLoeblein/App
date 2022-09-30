@@ -1,40 +1,165 @@
-import React from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
-
+import React, { useState, useEffect } from 'react';
+import { ToastAndroid, View, Text, StyleSheet, TextInput, TouchableOpacity, Button } from 'react-native';
 import * as Animatable from 'react-native-animatable';
+import { useNavigation,  NavigationContainer } from '@react-navigation/native'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Icon from 'react-native-vector-icons/Feather';
+import { BarCodeScanner } from 'expo-barcode-scanner';
 
-import { useNavigation } from '@react-navigation/native'
 
-export default function Home() {
-    const navigation = useNavigation();
-    return (
-        <View style={styles.container}>
-            <View style={styles.containerForm}>
-                <Text style={styles.title}>Logado com suceeso</Text>
-            </View>
-            <View>
-            <TouchableOpacity 
-                onPress={()=> navigation.navigate('Camera')}>
+function HomeScreen() {
+	return (
+		<View style={styles.container}>
+			<Text>Home!</Text>
+		</View>
+	);
+}
 
-                    <Text>Acessar</Text>
-                </TouchableOpacity> 
+function ListScreen() {
+	return (
+		<View style={styles.container}>
+			<Text>Categories!</Text>
+		</View>
+	);
+}
 
-            </View>           
+function PostScreen() {
+    const [hasPermission, setHasPermission] = useState(null);
+    const [scanned, setScanned] = useState(false);
+
+    useEffect(() => {
+        const getBarCodeScannerPermissions = async () => {
+        const { status } = await BarCodeScanner.requestPermissionsAsync();
+        setHasPermission(status === 'granted');
+        };
+
+        getBarCodeScannerPermissions();
+  }, []);
+
+  const handleBarCodeScanned = ({ type, data }) => {
+    setScanned(true);
+    if (Platform.OS === 'android'){
+        ToastAndroid.show(`${data} escaneado com sucesso!`, ToastAndroid.LONG);
+    }else{
+        alert(`Codigo ${data} escaneado com sucesso!`);
+    } 
+  };
+
+  if (hasPermission === null) {
+    return <Text>Solicitando permissão da câmera</Text>;
+  }
+  if (hasPermission === false) {
+    return <Text>Sem acesso a camera</Text>;
+  }
+  const styles = StyleSheet.create({
+    barcode:{
+        flex: 1,
+        width: "100%",
+        height: "100%",
+        flexDirection: "column",
+        justifyContent: 'flex-end',
+    },
+
+})
+
+	return (
+        <View style={styles.barcode}>
+            <BarCodeScanner
+                onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+                style={StyleSheet.absoluteFillObject}
+        />
+    {scanned && <Button title={'Clique para scanear novamente'} onPress={() => setScanned(false)} />}
         </View>
     );
 }
 
+
+function NotificationsScreen() {
+	return (
+		<View style={styles.container}>
+			<Text>Notifications!</Text>
+		</View>
+	);
+}
+
+function SettingsScreen() {
+	return (
+		<View style={styles.container}>
+			<Text>Settings!</Text>
+		</View>
+	);
+}
+
+const Tab = createBottomTabNavigator();
+
+export default function Home() {
+    const navigation = useNavigation();
+    return (
+        <NavigationContainer independent={true}>
+        <Tab.Navigator
+            screenOptions={({ route }) => ({
+                tabBarIcon: ({ color, size }) => {
+                    let iconName;
+
+                    switch (route.name) {
+                        case 'Home':
+                            iconName = 'home';
+                            break;
+                        case 'Categories':
+                            iconName = 'list';
+                            break;
+                        case 'Scanner':
+                            iconName = 'plus-circle';
+                            break;
+                        case 'Notifications':
+                            iconName = 'bell';
+                            break;
+                        case 'Settings':
+                            iconName = 'settings';
+                            break;
+                        default:
+                            iconName = 'circle';
+                            break;
+                    }
+
+                    return <Icon name={iconName} size={size} color={color} />;
+                },
+            })}
+            tabBarOptions={{
+                activeTintColor: '#38a69d',
+                inactiveTintColor: '#777',
+                showLabel: false,
+            }}
+        >
+            <Tab.Screen name="Home" component={HomeScreen} />
+            <Tab.Screen name="Categories" component={ListScreen} />
+            <Tab.Screen name="Scanner" component={PostScreen} options={{ headerShown: false }}/>
+            
+            <Tab.Screen name="Notifications" component={NotificationsScreen} />
+            <Tab.Screen name="Settings" component={SettingsScreen} />
+        </Tab.Navigator>
+    </NavigationContainer>
+);
+}
+
 const styles = StyleSheet.create({
-    container:{
-        flex:1,
-        backgroundColor: '#38a69d'
-    },
-    containerForm:{
-        flex: 1,
-        backgroundColor: '#fff',
-        borderTopLeftRadius: 25,
-        borderTopRightRadius: 25,
-        paddingStart: '5%',
-        paddingEnd: '5%'
-    }
-})
+container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+},
+iconTabRound: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginBottom: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: 'whitesmoke',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+}
+});
