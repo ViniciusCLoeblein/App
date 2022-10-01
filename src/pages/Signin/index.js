@@ -12,8 +12,9 @@ export default function SignIn() {
     const [codigoUsuario, setCodigoUsuario]= useState("");
     const [senha, setSenha] = useState("");
     const [hidePass, sethidePass] = useState(true);
-    
-  
+    const usuario = async () => {
+        ToastAndroid.show("Usuário", ToastAndroid.SHORT);
+    }
     const onSubmitFormHandler = async (event) => {
       if (!codigoUsuario.trim() || !senha.trim()) {
         alert("Preencha os dois campos");
@@ -57,7 +58,7 @@ export default function SignIn() {
                     maxLength={6}
                     keyboardType="numeric"							
                 />
-                <TouchableOpacity style={styles.icon}>
+                <TouchableOpacity style={styles.icon} onPress={usuario}>
                     <Icon name={'user'} color='black' size={25}/>
                 </TouchableOpacity>
             </Animatable.View>
