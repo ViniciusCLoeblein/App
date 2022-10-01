@@ -1,10 +1,9 @@
-
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-
-import * as Animatable from 'react-native-animatable';
-
+import React from 'react'
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
+import * as Animatable from 'react-native-animatable'
 import { useNavigation } from '@react-navigation/native'
+import Icon from 'react-native-vector-icons/Feather'
+
 
 export default function Welcome() {
     const navigation = useNavigation();
