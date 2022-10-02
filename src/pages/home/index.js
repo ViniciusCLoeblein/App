@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ToastAndroid, View, Text, StyleSheet, TextInput, TouchableOpacity, Button } from 'react-native';
+import { ToastAndroid, View, Text, StyleSheet, TextInput, TouchableOpacity, Button, Image, Dimensions  } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { useNavigation,  NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -26,6 +26,8 @@ function ListScreen() {
 function PostScreen() {
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
+    const width = Dimensions.get('window').width;
+    const height = Dimensions.get('window').height;
 
     useEffect(() => {
         const getBarCodeScannerPermissions = async () => {
@@ -65,9 +67,11 @@ function PostScreen() {
 	return (
         <View style={styles.barcode}>
             <BarCodeScanner
-                onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-                style={StyleSheet.absoluteFillObject}
-        />
+                onBarCodeScanned={scanned ? undefined : 
+                handleBarCodeScanned}
+                style={{ width: height - 188, height: height, 
+                alignSelf: "center" }}
+            />
     {scanned && <Button title={'Clique para scanear novamente'} onPress={() => setScanned(false)} />}
         </View>
     );
