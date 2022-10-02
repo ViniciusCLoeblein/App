@@ -72,7 +72,7 @@ function PostScreen() {
                 style={{ width: height - 188, height: height, 
                 alignSelf: "center" }}
             />
-    {scanned && <Button  title={'scanear novamente'} onPress={() => setScanned(false)}color="#38a69d" />}
+    {scanned && <Button  title={'scanear novamente'} onPress={() => setScanned(false)} color="#38a69d" />}
         </View>
     );
 }
